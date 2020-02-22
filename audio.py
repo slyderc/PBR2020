@@ -24,3 +24,4 @@ def play_music(music_file):
     pygame.mixer.music.load(f'{MUSIC_PATH}/{music_file}')
     pygame.mixer.music.set_volume(1.0)
     pygame.mixer.music.play()
+
