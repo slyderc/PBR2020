@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+"""
+ ______   ______   ______
+| |  | \ | |  | \ | |  | \
+| |__|_/ | |--| < | |__| |
+|_|      |_|__|_/ |_|   \_\
+   ong,         eer,      ad
+"""
 
 from classes import *
 from games import *

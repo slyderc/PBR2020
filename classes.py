@@ -1,13 +1,3 @@
-#!/usr/bin/env python3
-
-"""
- ______   ______   ______
-| |  | \ | |  | \ | |  | \
-| |__|_/ | |--| < | |__| |
-|_|      |_|__|_/ |_|   \_\
-   ong,         eer,      ad
-"""
-
 import random
 import string
 import opc
@@ -59,4 +49,3 @@ class Cups:
 
     def check_hits(self):
         pass
-    
