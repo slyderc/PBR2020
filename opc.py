@@ -37,6 +37,7 @@ import socket
 import struct
 import sys
 
+
 class Client(object):
 
     def __init__(self, server_ip_port, long_connection=True, verbose=False):

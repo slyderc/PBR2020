@@ -1,17 +1,23 @@
 #!/usr/bin/env python3
 
-import time
-import tty
-import termios
-import sys
-import opc
-import pygame
 from classes import *
+from games import *
+from audio import *
+
 
 def main():
+    pygame.init()
+    init_sound()
     player = Player()
-    game = Arcade_Game(player)
+    cups = Cups(verbose=True)
+    game = ArcadeGame(player, cups)
+
+    print(player)
+
+    # TODO: Player can select different game modes which will get set above
+
     game.start()
+    cups.shutdown()
 
 if __name__ == '__main__':
     main()
