@@ -35,7 +35,7 @@ class ArcadeGame:
     def __init__(self, player, cups, verbose=False):
         self.player = player
         self.cups = cups
-        self.game_length = 60
+        self.game_length = 14   # TODO: change this to 60 when debugging is done
         self.time_left = self.game_length
         self.game_name = "Arcade"
         self.game_over = GAME_OVER['LOST']
@@ -48,6 +48,10 @@ class ArcadeGame:
         """ Return the player's initials string """
         return self.game_name
 
+    def _game_over(self):
+        pygame.mixer.music.fadeout(1500)
+        pygame.quit()
+
     def _game_loop(self):
         self._start_ticks = pygame.time.get_ticks()
 
@@ -57,10 +61,27 @@ class ArcadeGame:
 
             """ TIME'S UP - GAME OVER """
             if self._last_time_check == 0:
-                pygame.mixer.music.fadeout(1500)
+                debug("OUT OF TIME")
+                self.game_over = GAME_OVER['TIMEOUT']
+                self._game_over()
                 break
 
-        print(self.player.player_initials)
+            """ Check for & record cup switch hits, or if (Q) pressed, which returns a True """
+            if self.cups.apply_cup_hits():
+                debug("QUIT")
+                self.game_over = GAME_OVER['QUIT']
+                self._game_over()
+                break
+
+            """ See if all 10 cups have been hit == WINNER """
+            if self.cups.count_cups() == 10:
+                debug("WINNER")
+                self.game_over = GAME_OVER['WON']
+                self._game_over()
+                break
+
+        debug(f"{self.player.player_initials} hit {self.cups.count_cups()} cups in {int(self.elapsed_seconds)} seconds")
+
         print(self.cups.cup_light[9])
         self.cups.cup_light[9] = (255, 255, 255)
         self.cups.push_pixels()

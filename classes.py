@@ -1,6 +1,11 @@
 import random
 import string
+import pygame
 import opc
+import sys
+import select
+import termios
+import tty
 from utils import debug
 from av import push_pixels
 
@@ -23,10 +28,12 @@ class Cups:
         self.address = "localhost: 7890"
         self.cup_light = [(0, 0, 0)] * 10
         self.cup_hit = [False] * 10
+        self.key_name = ''
         self.fadecandy = opc.Client(self.address, verbose=self.verbose)
         self._initialize()
 
     def _initialize(self):
+        tty.setcbreak(sys.stdin.fileno())   # setup keyboard I/O for cup switches
         if self.fadecandy.can_connect():
             debug('connected to %s' % self.address)
         else:
@@ -43,12 +50,32 @@ class Cups:
         """ Push our pixels out to the Fadecandy """
         self.fadecandy.put_pixels(self.cup_light)
 
+    @staticmethod
+    def cup_is_hit():
+        """ Check to see if there's keyboard input waiting and return it if so """
+        return select.select([sys.stdin], [], [], 0) == ([sys.stdin], [], [])
+
+    @staticmethod
+    def get_key_press():
+        """ Read then convert the keypress to a string character and return """
+        return str(sys.stdin.read(1)).upper()
+
     def light_cup(self, cup_num, color):
         """ Update a cup's color and then push the whole pixel list to the Fadecandy """
         if color is None:
             color = (0, 0, 0)
         self.cup_light[cup_num] = color
         push_pixels(self.fadecandy, self.cup_light)
+
+    def apply_cup_hits(self):
+        if self.cup_is_hit():
+            self.key_name = self.get_key_press()
+            if self.key_name.isdigit():
+                self.cup_hit[int(self.key_name)] = True
+                self.light_cup(int(self.key_name), (0, 0, 255))
+                debug(f"CUP: {self.key_name} hit")
+            elif self.key_name == 'Q':
+                return True
 
     def count_cups(self):
         """ Count how many cups have balls """
