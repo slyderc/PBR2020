@@ -1,6 +1,6 @@
 import time
 import pygame
-
+from utils import debug
 
 SOUND_PATH = '/home/cdimick/PBR2020/sounds'
 MUSIC_PATH = '/home/cdimick/PBR2020/music'
@@ -25,3 +25,11 @@ def play_music(music_file):
     pygame.mixer.music.set_volume(1.0)
     pygame.mixer.music.play()
 
+
+def push_pixels(fadecandy, cups):
+    """ Push our pixels out to the Fadecandy """
+    fadecandy.put_pixels(cups)
+
+
+def update_matrix(command_string):
+    debug(f"MATRIX: {command_string}")

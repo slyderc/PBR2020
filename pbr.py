@@ -9,7 +9,7 @@
 
 from classes import *
 from games import *
-from audio import *
+from av import init_sound
 
 
 def main():
@@ -18,13 +18,12 @@ def main():
     player = Player()
     cups = Cups(verbose=True)
     game = ArcadeGame(player, cups)
+    # TODO: Player can select different game modes which will ea. have their own class
 
     print(player)
-
-    # TODO: Player can select different game modes which will get set above
-
-    game.start()
+    print(game)
     cups.shutdown()
+
 
 if __name__ == '__main__':
     main()
