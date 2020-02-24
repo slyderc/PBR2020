@@ -1,15 +1,15 @@
 import pygame
 from av import play_sound, play_music, update_matrix
-from utils import debug
+from utils import config, debug
 
 GAME_OVER = {"LOST":0, "WON":1, "TIE":2, "TIMEOUT":3, "QUIT":4}
 GAME_MODE = {"PRACTICE":0, "TIMED":1}
 
 
 def time_check(game_length, elapsed_seconds, last_time_value):
+    """ Clock handler routine """
 
     seconds_left = int(game_length - elapsed_seconds)
-
     if seconds_left:
 
         """ Has one sec. of time elapsed?  If so, update display & run checks """
@@ -32,15 +32,13 @@ def time_check(game_length, elapsed_seconds, last_time_value):
 
 class ArcadeGame:
     """ ArcadeGame mode: 1 player; 60 sec. to hit all 10 cups """
-    def __init__(self, player, cups, verbose=False):
+    def __init__(self, player, cups):
         self.player = player
         self.cups = cups
         self.game_length = 14   # TODO: change this to 60 when debugging is done
         self.time_left = self.game_length
         self.game_name = "Arcade"
         self.game_over = GAME_OVER['LOST']
-        self.balls_thrown = 0
-        self.verbose = verbose
         self._last_time_check = 0
         self._game_loop()
 
@@ -80,12 +78,7 @@ class ArcadeGame:
                 self._game_over()
                 break
 
-        debug(f"{self.player.player_initials} hit {self.cups.count_cups()} cups in {int(self.elapsed_seconds)} seconds")
-
-        print(self.cups.cup_light[9])
-        self.cups.cup_light[9] = (255, 255, 255)
-        self.cups.push_pixels()
-        print(self.cups.cup_light[9])
+        debug(f"{self.player.player_initials} threw {self.cups.balls_thrown} balls and hit {self.cups.count_cups()} cups in {int(self.elapsed_seconds)} seconds")
 
     def top10(self):
         pass
@@ -93,13 +86,12 @@ class ArcadeGame:
 
 class TicTacToeGame:
     """ TicTacToe mode: 2 players; ea. taking turns to win a 3-in-a-row line """
-    def __init__(self, player_1, cups, player_2=None, game_mode=GAME_MODE['TIMED'], verbose=False):
+    def __init__(self, player_1, cups, player_2=None, game_mode=GAME_MODE['TIMED']):
         self.player_1 = player_1
         self.player_2 = player_2
         self.cups = cups
         self.game_name = "TicTacToe"
         self.game_mode = game_mode
-        self.verbose = verbose
         self._game_loop()
 
     def __str__(self):
@@ -115,13 +107,12 @@ class TicTacToeGame:
 
 class TargetPracticeGame:
     """ TargetPractice mode: sequential cup hits and random, computer-given cup hits """
-    def __init__(self, player_1, cups, player_2=None, game_mode=GAME_MODE['TIMED'], verbose=False):
+    def __init__(self, player_1, cups, player_2=None, game_mode=GAME_MODE['TIMED']):
         self.player_1 = player_1
         self.player_2 = player_2
         self.cups = cups
         self.game_name = "TargetPractice"
         self.game_mode = game_mode
-        self.verbose = verbose
         self._game_loop()
 
     def __str__(self):

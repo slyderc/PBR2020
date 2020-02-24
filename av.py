@@ -1,9 +1,6 @@
 import time
 import pygame
-from utils import debug
-
-SOUND_PATH = '/home/cdimick/PBR2020/sounds'
-MUSIC_PATH = '/home/cdimick/PBR2020/music'
+from utils import config, debug
 
 
 def init_sound():
@@ -13,7 +10,7 @@ def init_sound():
 
 
 def play_sound(sound_file, wait=False):
-    sfx = pygame.mixer.Sound(f'{SOUND_PATH}/{sound_file}')
+    sfx = pygame.mixer.Sound(f"{config['defaults']['game_path']}/sounds/{sound_file}")
     sfx.set_volume(1.0)
     sfx.play()
     if wait:
@@ -21,7 +18,7 @@ def play_sound(sound_file, wait=False):
 
 
 def play_music(music_file):
-    pygame.mixer.music.load(f'{MUSIC_PATH}/{music_file}')
+    pygame.mixer.music.load(f"{config['defaults']['game_path']}/music/{music_file}")
     pygame.mixer.music.set_volume(1.0)
     pygame.mixer.music.play()
 

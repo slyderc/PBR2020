@@ -7,7 +7,7 @@
    ong,         eer,      ad
 """
 
-from classes import *
+from classes import Player, Cups
 from games import *
 from av import init_sound
 
@@ -16,13 +16,12 @@ def main():
     pygame.init()
     init_sound()
     player = Player()
-    cups = Cups(verbose=True)
+    cups = Cups()
     game = ArcadeGame(player, cups)
     # TODO: Player can select different game modes which will ea. have their own class
-
     print(player)
     print(game)
-    cups.shutdown()
+    cups.shutdown()     # close Fadecandy connection, reset term. settings and clean-up
 
 
 if __name__ == '__main__':
