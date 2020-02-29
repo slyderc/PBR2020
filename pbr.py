@@ -19,10 +19,9 @@ def main():
     cups = Cups()
     game = ArcadeGame(player, cups)
     # TODO: Player can select different game modes which will ea. have their own class
-    print(player)
     print(game)
     cups.shutdown()     # close Fadecandy connection, reset term. settings and clean-up
 
 
 if __name__ == '__main__':
-    main()
+    exit(main())
