@@ -1,6 +1,6 @@
 import pygame
 from av import play_sound, play_music, update_matrix
-from utils import config, debug
+from utils import config, debug, game_log
 
 GAME_OVER = {"LOST":0, "WON":1, "TIE":2, "TIMEOUT":3, "QUIT":4}
 GAME_MODE = {"PRACTICE":0, "TIMED":1}
@@ -16,16 +16,16 @@ def time_check(game_length, elapsed_seconds, last_time_value):
         if seconds_left != last_time_value:
             if seconds_left == 10:
                 debug("*** HURRY UP ***")
-                play_music("BK2K_hurry.mp3")
+                play_music(config['music']['hurry_up'])
 
             if seconds_left < 6:
                 if seconds_left != 0:
-                    play_sound("countdown_" + str(seconds_left) + ".wav")
+                    play_sound(config['sounds']['countdown'] + str(seconds_left) + ".wav")
                 else:
-                    play_sound("airhorn.wav")
+                    play_sound(config['sounds']['times_up'])
 
-            update_matrix("TIME,"+str(seconds_left))
-            debug("** {} **".format(str(seconds_left)))
+            update_matrix(command="TIME", value=seconds_left)
+            debug(f"** {str(seconds_left)} **")
 
     return seconds_left
 
@@ -38,15 +38,16 @@ class ArcadeGame:
         self.game_length = 14   # TODO: change this to 60 when debugging is done
         self.time_left = self.game_length
         self.game_name = "Arcade"
-        self.game_over = GAME_OVER['LOST']
         self._last_time_check = 0
+        game_log(f"{player.player_initials} starting new {self.game_name} game of {self.game_length} seconds")
         self._game_loop()
 
     def __str__(self):
         """ Return the player's initials string """
         return self.game_name
 
-    def _game_over(self):
+    @staticmethod
+    def _game_over():
         pygame.mixer.music.fadeout(1500)
         pygame.quit()
 
@@ -60,25 +61,28 @@ class ArcadeGame:
             """ TIME'S UP - GAME OVER """
             if self._last_time_check == 0:
                 debug("OUT OF TIME")
-                self.game_over = GAME_OVER['TIMEOUT']
+                play_sound(config['sounds']['you_lose'])
                 self._game_over()
                 break
 
             """ Check for & record cup switch hits, or if (Q) pressed, which returns a True """
             if self.cups.apply_cup_hits():
                 debug("QUIT")
-                self.game_over = GAME_OVER['QUIT']
                 self._game_over()
                 break
 
             """ See if all 10 cups have been hit == WINNER """
             if self.cups.count_cups() == 10:
                 debug("WINNER")
-                self.game_over = GAME_OVER['WON']
+                play_music(config['music']['you_win'])
+                play_sound(config['sounds']['win_cheering'])
+                pygame.mixer.music.fadeout(8000)
                 self._game_over()
                 break
 
-        debug(f"{self.player.player_initials} threw {self.cups.balls_thrown} balls and hit {self.cups.count_cups()} cups in {int(self.elapsed_seconds)} seconds")
+        log_entry = (f"{self.player.player_initials} threw {self.cups.balls_thrown} balls and hit {self.cups.count_cups()} cups in {int(self.elapsed_seconds)} seconds")
+        debug(log_entry)
+        game_log(log_entry)
 
     def top10(self):
         pass
@@ -92,6 +96,7 @@ class TicTacToeGame:
         self.cups = cups
         self.game_name = "TicTacToe"
         self.game_mode = game_mode
+        game_log(f"{player_1.player_initials} and {player_2.player_initials} starting new {self.game_name} game")
         self._game_loop()
 
     def __str__(self):
